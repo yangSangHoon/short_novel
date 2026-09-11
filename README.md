@@ -28,6 +28,16 @@ npm run lint
 
 원고는 브라우저 `localStorage` 에만 저장됩니다. 서버도 계정도 없습니다.
 
+## 배포
+
+기본 브랜치에 밀면 `.github/workflows/pages.yml` 이 빌드해서 GitHub Pages 에 올립니다.
+→ https://yangsanghoon.github.io/short_novel/
+
+저장소 이름 아래(`/short_novel/`)에 올라가므로 빌드 시 `GITHUB_REPOSITORY` 에서 base 경로를
+끌어오고, 라우터도 같은 값을 basename 으로 씁니다. 로컬 빌드는 값이 없어 루트가 됩니다.
+Pages 는 없는 경로에 `404.html` 을 내려주므로 워크플로가 `index.html` 을 그리로 복사해
+`/read/…` 로 바로 들어오거나 새로고침해도 라우팅이 살아 있게 합니다.
+
 ## 자동 삽화가 동작하는 방식
 
 `src/illustration/` 안에서 세 단계로 나뉩니다.

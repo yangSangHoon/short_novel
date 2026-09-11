@@ -11,7 +11,8 @@ export default function App(): ReactNode {
   return (
     <ThemeProvider>
       <NovelsProvider>
-        <Router>
+        {/* GitHub Pages 처럼 하위 경로에 올라가도 라우팅이 맞도록 빌드 시 base 를 따라간다 */}
+        <Router basename={import.meta.env.BASE_URL}>
           <Routes>
             <Route path="/" element={<Library />} />
             <Route path="/write/:id" element={<Editor />} />

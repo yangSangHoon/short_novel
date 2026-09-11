@@ -1,0 +1,252 @@
+.reader {
+  min-height: 100vh;
+  background: var(--paper-sunken);
+}
+
+/* ---- 상단 바 ---- */
+.reader__bar {
+  position: sticky;
+  top: 0;
+  z-index: 30;
+  display: flex;
+  align-items: center;
+  gap: var(--s2);
+  height: 48px;
+  padding: 0 var(--s3);
+  background: var(--paper-overlay);
+  backdrop-filter: saturate(180%) blur(12px);
+  border-bottom: 1px solid var(--line);
+}
+.reader__title {
+  font-family: var(--font-serif);
+  font-size: 14px;
+  color: var(--ink-muted);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 42vw;
+}
+.reader__progress {
+  position: sticky;
+  top: 48px;
+  z-index: 30;
+  height: 2px;
+  background: var(--line);
+}
+.reader__progress span {
+  display: block;
+  height: 100%;
+  background: var(--accent);
+  transition: width var(--dur) var(--ease);
+}
+
+/* ---- 한 칸씩 보기 ---- */
+.stage {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: calc(100vh - 50px);
+  padding: var(--s6) var(--s5) 116px;
+}
+.stage__slot {
+  width: min(720px, 100%);
+  animation: panel-in var(--dur-slow) var(--ease);
+}
+@keyframes panel-in {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* ---- 칸 ---- */
+.panel {
+  position: relative;
+  background: var(--paper-raised);
+  border: 1px solid var(--line);
+  border-radius: var(--r-lg);
+  overflow: hidden;
+  box-shadow: var(--shadow-md);
+}
+.panel__art {
+  position: relative;
+  aspect-ratio: 8 / 5;
+  background: var(--paper-sunken);
+}
+.panel__art > svg {
+  width: 100%;
+  height: 100%;
+}
+.panel__text {
+  padding: var(--s6) var(--s6) var(--s7);
+  font-family: var(--font-serif);
+  font-size: 17.5px;
+  line-height: 2.05;
+  color: var(--ink);
+  word-break: keep-all;
+}
+.panel__text p + p {
+  margin-top: 1.15em;
+}
+.panel__blank {
+  color: var(--ink-faint);
+  font-style: italic;
+}
+.panel__no {
+  position: absolute;
+  right: var(--s4);
+  bottom: var(--s3);
+  font-size: 11px;
+  color: var(--ink-faint);
+  font-variant-numeric: tabular-nums;
+}
+
+/* ---- 표지 ---- */
+/* 세로 비율을 높이로 제한하면 브라우저가 너비까지 줄인다.
+   대신 카드 자체의 최대 너비를 뷰포트 높이에서 역산한다. */
+.panel--cover {
+  max-width: min(720px, 56vh);
+  margin: 0 auto;
+}
+.panel--cover .panel__art {
+  aspect-ratio: 3 / 4;
+}
+.cover__scrim {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, rgba(8, 6, 4, 0.82) 6%, rgba(8, 6, 4, 0.15) 46%, transparent 72%);
+}
+.cover__copy {
+  position: absolute;
+  inset: auto 0 0 0;
+  padding: var(--s6);
+  color: #fbf7ee;
+}
+.cover__copy h1 {
+  font-size: clamp(26px, 4.6vw, 40px);
+  line-height: 1.28;
+  color: inherit;
+  margin-bottom: var(--s3);
+}
+.cover__copy p {
+  font-size: 15px;
+  line-height: 1.7;
+  opacity: 0.88;
+  max-width: 32rem;
+}
+.cover__meta {
+  display: block;
+  margin-top: var(--s4);
+  font-size: 12.5px;
+  letter-spacing: 0.04em;
+  opacity: 0.66;
+}
+
+/* ---- 좌우 탭 영역 ---- */
+.tap {
+  position: fixed;
+  top: 50px;
+  bottom: 104px;
+  width: 22%;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+  z-index: 10;
+}
+.tap:disabled {
+  cursor: default;
+}
+.tap--prev {
+  left: 0;
+}
+.tap--next {
+  right: 0;
+}
+
+/* ---- 하단 내비 ---- */
+.reader__nav {
+  position: fixed;
+  left: 50%;
+  bottom: var(--s5);
+  transform: translateX(-50%);
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  gap: var(--s3);
+  padding: var(--s2);
+  border-radius: var(--r-full);
+  border: 1px solid var(--line);
+  background: var(--paper-overlay);
+  backdrop-filter: saturate(180%) blur(12px);
+  box-shadow: var(--shadow-lg);
+}
+.reader__count {
+  min-width: 72px;
+  text-align: center;
+  font-size: 12.5px;
+  color: var(--ink-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+/* ---- 끝 ---- */
+.ending {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--s4);
+  padding: var(--s9) var(--s5);
+  text-align: center;
+}
+.ending__mark {
+  font-family: var(--font-serif);
+  font-size: 13px;
+  letter-spacing: 0.5em;
+  text-indent: 0.5em;
+  color: var(--ink-faint);
+}
+.ending h2 {
+  font-size: 26px;
+}
+.ending__actions {
+  display: flex;
+  gap: var(--s3);
+  margin-top: var(--s2);
+}
+
+/* ---- 이어보기(세로 스크롤) ---- */
+.stream {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s5);
+  width: min(720px, 100%);
+  margin: 0 auto;
+  padding: var(--s6) var(--s5) var(--s8);
+}
+
+@media (max-width: 640px) {
+  .stage {
+    padding: var(--s4) var(--s3) 108px;
+  }
+  .stream {
+    padding: var(--s4) var(--s3) var(--s7);
+  }
+  .panel__text {
+    padding: var(--s5) var(--s4) var(--s6);
+    font-size: 16.5px;
+    line-height: 1.95;
+  }
+  .cover__copy {
+    padding: var(--s5) var(--s4);
+  }
+  .reader__nav {
+    width: calc(100% - var(--s6));
+    justify-content: space-between;
+  }
+  .tap {
+    bottom: 96px;
+  }
+}

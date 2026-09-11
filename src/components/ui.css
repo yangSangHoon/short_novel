@@ -1,0 +1,203 @@
+/* ---- 버튼 ---- */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s2);
+  padding: 0 var(--s4);
+  height: 38px;
+  border-radius: var(--r-full);
+  border: 1px solid transparent;
+  background: transparent;
+  color: var(--ink);
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background var(--dur-fast) var(--ease), border-color var(--dur-fast) var(--ease),
+    color var(--dur-fast) var(--ease), transform var(--dur-fast) var(--ease);
+}
+.btn:active {
+  transform: translateY(1px);
+}
+.btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.btn--primary {
+  background: var(--accent);
+  color: #fff;
+  box-shadow: var(--shadow-sm);
+}
+[data-theme="dark"] .btn--primary {
+  color: #231410;
+}
+.btn--primary:hover:not(:disabled) {
+  background: var(--accent-hover);
+}
+
+.btn--outline {
+  border-color: var(--line-strong);
+  background: var(--paper-raised);
+}
+.btn--outline:hover:not(:disabled) {
+  border-color: var(--ink-faint);
+  background: var(--paper-sunken);
+}
+
+.btn--ghost:hover:not(:disabled) {
+  background: var(--paper-sunken);
+}
+
+.btn--quiet {
+  color: var(--ink-muted);
+  padding: 0 var(--s3);
+}
+.btn--quiet:hover:not(:disabled) {
+  color: var(--ink);
+  background: var(--paper-sunken);
+}
+
+.btn--icon {
+  width: 38px;
+  padding: 0;
+  justify-content: center;
+}
+.btn--sm {
+  height: 30px;
+  font-size: 13px;
+  padding: 0 var(--s3);
+}
+.btn--sm.btn--icon {
+  width: 30px;
+}
+.btn--danger:hover:not(:disabled) {
+  color: var(--danger);
+  background: var(--accent-soft);
+}
+
+/* ---- 입력 ---- */
+.field {
+  width: 100%;
+  padding: var(--s3) var(--s4);
+  border: 1px solid var(--line);
+  border-radius: var(--r-md);
+  background: var(--paper-raised);
+  transition: border-color var(--dur-fast) var(--ease), box-shadow var(--dur-fast) var(--ease);
+}
+.field:hover {
+  border-color: var(--line-strong);
+}
+.field:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 4px var(--focus-ring);
+}
+.field::placeholder {
+  color: var(--ink-faint);
+}
+
+/* ---- 배지 / 칩 ---- */
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s1);
+  height: 26px;
+  padding: 0 var(--s3);
+  border-radius: var(--r-full);
+  border: 1px solid var(--line);
+  background: var(--paper-raised);
+  color: var(--ink-muted);
+  font-size: 12px;
+  letter-spacing: 0.01em;
+  cursor: pointer;
+  transition: all var(--dur-fast) var(--ease);
+}
+.chip:hover {
+  border-color: var(--ink-faint);
+  color: var(--ink);
+}
+.chip[aria-pressed="true"] {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+}
+[data-theme="dark"] .chip[aria-pressed="true"] {
+  color: #231410;
+}
+.chip--static {
+  cursor: default;
+}
+.chip--static:hover {
+  border-color: var(--line);
+  color: var(--ink-muted);
+}
+
+/* ---- 상단 바 ---- */
+.topbar {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  gap: var(--s3);
+  height: var(--topbar-h);
+  padding: 0 var(--s5);
+  background: var(--paper-overlay);
+  backdrop-filter: saturate(180%) blur(12px);
+  border-bottom: 1px solid var(--line);
+}
+.topbar__brand {
+  display: flex;
+  align-items: center;
+  gap: var(--s2);
+  font-family: var(--font-serif);
+  font-size: 17px;
+  font-weight: 600;
+  color: var(--ink-strong);
+}
+.topbar__brand-mark {
+  color: var(--accent);
+  display: flex;
+}
+.topbar__spacer {
+  flex: 1;
+}
+.topbar__status {
+  font-size: 12px;
+  color: var(--ink-faint);
+  min-width: 62px;
+  text-align: right;
+  transition: color var(--dur) var(--ease);
+}
+.topbar__status[data-state="error"] {
+  color: var(--danger);
+}
+
+@media (max-width: 640px) {
+  .topbar {
+    padding: 0 var(--s4);
+    gap: var(--s2);
+  }
+  .topbar__label {
+    display: none;
+  }
+}
+
+/* ---- 빈 상태 ---- */
+.empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--s4);
+  padding: var(--s9) var(--s5);
+  text-align: center;
+  color: var(--ink-muted);
+}
+.empty h2 {
+  font-size: 22px;
+}
+.empty p {
+  max-width: 30rem;
+}

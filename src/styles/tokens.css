@@ -1,97 +1,138 @@
 /* ---------------------------------------------------------------
-   디자인 토큰 — 색/타이포/간격의 단일 출처.
-   외부 디자인 시스템을 붙일 때 이 파일의 값만 교체하면 된다.
+   종이결 — 디자인 토큰.
+   출처: Claude Design "웹소설 플랫폼" 아트보드 + classical 디자인 시스템.
+   색·타이포·간격의 단일 출처이므로 값은 여기서만 바꾼다.
    --------------------------------------------------------------- */
 :root {
-  /* 종이 계열 (라이트) */
-  --paper: #faf7f2;
-  --paper-raised: #ffffff;
-  --paper-sunken: #f2ede4;
-  --paper-overlay: rgba(250, 247, 242, 0.86);
+  /* 종이 — 바깥 바탕부터 떠 있는 판까지 네 단계 */
+  --canvas: #e9e3db;
+  --paper: #f5f1ec;
+  --paper-sunken: #f7f3ee;
+  --paper-raised: #fbf8f4;
+  --paper-overlay: rgba(245, 241, 236, 0.88);
 
-  /* 잉크 계열 */
-  --ink: #1b1813;
-  --ink-strong: #0d0b08;
-  --ink-muted: #6b6357;
-  --ink-faint: #9a9184;
+  /* 잉크 */
+  --ink-strong: #2f2a25;
+  --ink: #3f3832;
+  --ink-body: #443c35;
+  --ink-muted: #8a7f74;
+  --ink-faint: #9b8f83;
+  --ink-faintest: #a79b8e;
 
   /* 선 */
-  --line: #e3dbcd;
-  --line-strong: #cfc4b0;
+  --line: #e6ded4;
+  --line-strong: #e3d9cd;
+  --line-dashed: #d8cec2;
 
-  /* 강조 */
-  --accent: #a8482c;
-  --accent-hover: #8e3a21;
-  --accent-soft: #f6e7e0;
-  --gold: #9a7b3c;
+  /* 금색 — 회차·진행·강조 표시 */
+  --gold: #c8a24a;
+  --gold-soft: #f2e6cb;
 
-  /* 상태 */
-  --danger: #a3342c;
-  --focus-ring: rgba(168, 72, 44, 0.32);
+  /* 장미색 — 주 행동(다음·발행·삽화 생성) */
+  --rose: #dd9aa0;
+  --rose-bg: #f8dcdc;
+  --rose-bg-hover: #f4cdce;
+  --rose-ink: #a4545d;
+  --rose-line: #e3b7b4;
+  --rose-text: #b87a74;
+
+  /* 풀색 — 저장됨·메모 */
+  --leaf: #bcd0b4;
+  --leaf-bg: #e6efe2;
+  --leaf-bg-hover: #dcead6;
+  --leaf-ink: #5f7756;
+
+  /* 물색 — 보조 태그 */
+  --wave: #bfd2de;
+  --wave-ink: #74909f;
+
+  --focus-ring: rgba(200, 162, 74, 0.36);
 
   /* 타이포 */
-  --font-serif: "Noto Serif KR", "Nanum Myeongjo", Georgia, "Times New Roman", serif;
-  --font-sans: "Pretendard", "Noto Sans KR", -apple-system, BlinkMacSystemFont, "Segoe UI",
-    system-ui, sans-serif;
-  --font-mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, monospace;
+  --font-serif: "Gowun Batang", "Nanum Myeongjo", Georgia, serif;
+  --font-sans: "Gowun Dodum", "Apple SD Gothic Neo", system-ui, sans-serif;
+  --font-display: "Cormorant Garamond", "Gowun Batang", Georgia, serif;
 
-  /* 간격 (4px 스케일) */
+  /* 간격 */
   --s1: 4px;
   --s2: 8px;
   --s3: 12px;
   --s4: 16px;
-  --s5: 24px;
-  --s6: 32px;
-  --s7: 48px;
-  --s8: 64px;
-  --s9: 96px;
+  --s5: 22px;
+  --s6: 30px;
+  --s7: 44px;
+  --s8: 62px;
+  --s9: 88px;
 
-  /* 모서리 */
-  --r-sm: 6px;
-  --r-md: 10px;
-  --r-lg: 16px;
-  --r-xl: 24px;
+  /* 모서리 — 원본은 전반적으로 작고 부드럽다 */
+  --r-sm: 3px;
+  --r-md: 6px;
+  --r-lg: 8px;
+  --r-xl: 10px;
+  --r-2xl: 20px;
   --r-full: 999px;
 
-  /* 그림자 */
-  --shadow-sm: 0 1px 2px rgba(27, 24, 19, 0.06), 0 1px 1px rgba(27, 24, 19, 0.04);
-  --shadow-md: 0 4px 16px rgba(27, 24, 19, 0.08), 0 1px 3px rgba(27, 24, 19, 0.05);
-  --shadow-lg: 0 18px 48px rgba(27, 24, 19, 0.14), 0 2px 8px rgba(27, 24, 19, 0.06);
+  /* 그림자 — 종이 위에 놓인 인화지처럼 낮고 넓게 */
+  --shadow-sm: 0 6px 14px -10px rgba(90, 72, 60, 0.6);
+  --shadow-md: 0 10px 22px -14px rgba(90, 72, 60, 0.5);
+  --shadow-lg: 0 24px 48px -18px rgba(90, 72, 60, 0.38);
+  --shadow-rose: 0 6px 14px -8px rgba(164, 84, 93, 0.6);
 
-  /* 모션 */
-  --ease: cubic-bezier(0.22, 0.61, 0.36, 1);
-  --dur-fast: 120ms;
-  --dur: 220ms;
+  /* 종이 결 — 화면 전체에 아주 얕게 깔리는 노이즈 */
+  --paper-grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100'%3E%3Cfilter id='p'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23p)' opacity='0.16'/%3E%3C/svg%3E");
+
+  --ease: cubic-bezier(0.22, 0.7, 0.3, 1);
+  --dur-fast: 140ms;
+  --dur: 240ms;
   --dur-slow: 420ms;
 
-  /* 레이아웃 */
-  --measure: 38rem; /* 본문 한 줄 길이 */
-  --topbar-h: 56px;
+  --measure: 34rem;
+  --topbar-h: 58px;
 }
 
+/* 야간 독서용 — 같은 색 계열을 어둡게 뒤집되 온기는 남긴다 */
 [data-theme="dark"] {
-  --paper: #16140f;
-  --paper-raised: #1f1c16;
-  --paper-sunken: #100e0a;
-  --paper-overlay: rgba(22, 20, 15, 0.86);
+  --canvas: #1d1a16;
+  --paper: #24201b;
+  --paper-sunken: #201c18;
+  --paper-raised: #2c2721;
+  --paper-overlay: rgba(36, 32, 27, 0.88);
 
-  --ink: #ece5d8;
-  --ink-strong: #fbf7ee;
-  --ink-muted: #a79d8c;
-  --ink-faint: #79705f;
+  --ink-strong: #f6efe2;
+  --ink: #e7dfd1;
+  --ink-body: #ddd4c5;
+  --ink-muted: #a29686;
+  --ink-faint: #8b8071;
+  --ink-faintest: #776d60;
 
-  --line: #302b22;
-  --line-strong: #453e31;
+  --line: #3a332b;
+  --line-strong: #473f35;
+  --line-dashed: #4f463a;
 
-  --accent: #e0866a;
-  --accent-hover: #eb9b81;
-  --accent-soft: #2e211b;
-  --gold: #cfa961;
+  --gold: #d9b565;
+  --gold-soft: #3a3121;
 
-  --danger: #e0796e;
-  --focus-ring: rgba(224, 134, 106, 0.35);
+  --rose: #c98d93;
+  --rose-bg: #402a2b;
+  --rose-bg-hover: #4c3233;
+  --rose-ink: #eab3b7;
+  --rose-line: #6b4547;
+  --rose-text: #d79ba0;
 
-  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.4);
-  --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.45);
-  --shadow-lg: 0 18px 48px rgba(0, 0, 0, 0.55);
+  --leaf: #8aa47f;
+  --leaf-bg: #29321f;
+  --leaf-bg-hover: #323d27;
+  --leaf-ink: #b6cbaa;
+
+  --wave: #7e98a8;
+  --wave-ink: #a9c2d0;
+
+  --focus-ring: rgba(217, 181, 101, 0.38);
+
+  --shadow-sm: 0 6px 14px -10px rgba(0, 0, 0, 0.8);
+  --shadow-md: 0 10px 22px -12px rgba(0, 0, 0, 0.75);
+  --shadow-lg: 0 24px 48px -18px rgba(0, 0, 0, 0.7);
+  --shadow-rose: 0 6px 14px -8px rgba(0, 0, 0, 0.7);
+
+  --paper-grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100'%3E%3Cfilter id='p'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23p)' opacity='0.07'/%3E%3C/svg%3E");
 }

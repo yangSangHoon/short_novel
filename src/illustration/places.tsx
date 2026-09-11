@@ -42,42 +42,65 @@ const range = (rand: () => number, min: number, max: number) => min + rand() * (
 /* 실외 배경                                                           */
 /* ------------------------------------------------------------------ */
 
-function City({ p, rand, horizon }: SceneryProps): ReactNode {
-  const litOpacity = p.lowLight ? 0.55 : 0.12;
-  const far = times(16, (i) => {
-    const w = range(rand, 26, 62);
-    const h = range(rand, 50, 190);
-    return { x: i * 50 - 10 + range(rand, -8, 8), w, h };
-  });
-  const mid = times(9, (i) => ({
-    x: i * 92 - 30 + range(rand, -10, 10),
-    w: range(rand, 54, 100),
-    h: range(rand, 40, 120),
+function City({ p, rand, horizon, uid }: SceneryProps): ReactNode {
+  const litOpacity = p.lowLight ? 0.55 : 0.14;
+
+  // 뒤쪽은 옅은 덩어리로, 앞쪽은 박공지붕을 얹은 파스텔 집으로 — 언덕 위 마을처럼.
+  const distant = times(12, (i) => ({
+    x: i * 68 - 20 + range(rand, -10, 10),
+    w: range(rand, 34, 70),
+    h: range(rand, 46, 150),
+  }));
+  const houses = times(9, (i) => ({
+    x: i * 92 - 26 + range(rand, -8, 8),
+    w: range(rand, 56, 92),
+    h: range(rand, 52, 104),
+    wall: p.wall[Math.floor(rand() * 3)],
+    roof: p.roof[Math.floor(rand() * 2)],
   }));
 
   return (
     <g>
-      {far.map((b, i) => (
-        <g key={`f${i}`}>
-          <rect x={b.x} y={horizon - b.h} width={b.w} height={b.h + 10} fill={p.far} />
-          {times(Math.floor(b.h / 26), (j) => (
-              <rect
-                key={j}
-                x={b.x + 6 + (j % 2) * 14}
-                y={horizon - b.h + 12 + j * 22}
-                width={7}
-                height={9}
-              fill={p.glow}
-              opacity={rand() > 0.45 ? litOpacity : litOpacity * 0.25}
+      {distant.map((b, i) => (
+        <rect key={`f${i}`} x={b.x} y={horizon - b.h} width={b.w} height={b.h + 10} fill={p.far} />
+      ))}
+      {houses.map((b, i) => (
+        <g key={`h${i}`} filter={`url(#${uid}-drop)`}>
+          <rect
+            x={b.x}
+            y={horizon - b.h}
+            width={b.w}
+            height={b.h + 8}
+            fill={b.wall}
+            stroke={p.outline}
+            strokeWidth={0.8}
+          />
+          <path
+            d={`M${b.x - 6} ${horizon - b.h} H${b.x + b.w + 6} L${b.x + b.w / 2} ${horizon - b.h - b.w * 0.34} Z`}
+            fill={b.roof}
+          />
+          {times(Math.max(1, Math.floor(b.h / 34)), (j) => (
+            <rect
+              key={j}
+              x={b.x + 10 + (j % 2) * (b.w - 36)}
+              y={horizon - b.h + 16 + j * 30}
+              width={16}
+              height={18}
+              rx={1}
+              fill={p.lowLight ? p.glow : "#a7c2d3"}
+              opacity={rand() > 0.4 ? litOpacity + 0.3 : litOpacity}
             />
           ))}
         </g>
       ))}
-      {mid.map((b, i) => (
-        <rect key={`m${i}`} x={b.x} y={horizon - b.h} width={b.w} height={b.h + 20} fill={p.mid} />
-      ))}
       <rect x={0} y={horizon} width={W} height={H - horizon} fill={p.ground} />
-      <rect x={0} y={horizon + 54} width={W} height={3} fill={p.near} opacity={0.5} />
+      <path
+        d={`M0 ${horizon + 52} H${W}`}
+        stroke={p.outline}
+        strokeWidth={1.5}
+        opacity={0.4}
+        fill="none"
+      />
     </g>
   );
 }
@@ -121,7 +144,7 @@ function Sea({ p, rand, horizon, uid }: SceneryProps): ReactNode {
         fill={p.far}
         opacity={0.8}
       />
-      <rect x={0} y={horizon} width={W} height={H - horizon} fill={p.mid} />
+      <rect x={0} y={horizon} width={W} height={H - horizon} fill={p.water} />
       <rect x={0} y={horizon} width={W} height={H - horizon} fill={`url(#${uid}-sea)`} />
       {times(16, (i) => {
         const y = horizon + 10 + i * 9 + rand() * 5;
@@ -133,10 +156,10 @@ function Sea({ p, rand, horizon, uid }: SceneryProps): ReactNode {
             x={x}
             y={y}
             width={w}
-            height={2.5}
-            rx={1.25}
+            height={3}
+            rx={1.5}
             fill={p.haze}
-            opacity={0.16 + rand() * 0.22}
+            opacity={0.4 + rand() * 0.4}
           />
         );
       })}
@@ -204,14 +227,16 @@ function Field({ p, rand, horizon }: SceneryProps): ReactNode {
   );
 }
 
-function School({ p, rand, horizon }: SceneryProps): ReactNode {
+function School({ p, rand, horizon, uid }: SceneryProps): ReactNode {
   const bx = 190;
   const by = horizon - 150;
   return (
     <g>
       <rect x={0} y={horizon} width={W} height={H - horizon} fill={p.ground} />
-      <rect x={bx} y={by} width={420} height={170} fill={p.mid} />
-      <path d={`M${bx - 16} ${by} H${bx + 436} L${bx + 410} ${by - 24} H${bx + 10} Z`} fill={p.near} />
+      <g filter={`url(#${uid}-drop)`}>
+        <rect x={bx} y={by} width={420} height={170} fill={p.wall[0]} stroke={p.outline} strokeWidth={0.9} />
+        <path d={`M${bx - 18} ${by} H${bx + 438} L${bx + 210} ${by - 42} Z`} fill={p.roof[0]} />
+      </g>
       {times(3, (r) =>
         times(7, (c) => (
           <rect
@@ -220,16 +245,17 @@ function School({ p, rand, horizon }: SceneryProps): ReactNode {
             y={by + 22 + r * 46}
             width={34}
             height={28}
-            fill={p.glow}
-            opacity={rand() > 0.5 ? (p.lowLight ? 0.5 : 0.16) : 0.1}
+            rx={1}
+            fill={p.lowLight ? p.glow : "#a7c2d3"}
+            opacity={rand() > 0.5 ? (p.lowLight ? 0.62 : 0.5) : 0.24}
           />
         )),
       )}
-      <rect x={bx + 190} y={by + 120} width={44} height={50} fill={p.near} />
+      <rect x={bx + 190} y={by + 118} width={44} height={52} rx={2} fill={p.roof[1]} opacity={0.8} />
       {times(14, (i) => (
-        <rect key={i} x={i * 58 + 14} y={horizon - 26} width={4} height={28} fill={p.near} opacity={0.7} />
+        <rect key={i} x={i * 58 + 14} y={horizon - 26} width={3.5} height={28} fill={p.outline} opacity={0.6} />
       ))}
-      <rect x={0} y={horizon - 14} width={W} height={3} fill={p.near} opacity={0.6} />
+      <path d={`M0 ${horizon - 13} H${W}`} stroke={p.outline} strokeWidth={1.5} opacity={0.5} />
     </g>
   );
 }

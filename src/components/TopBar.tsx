@@ -19,10 +19,8 @@ export function TopBar({ children, showSave = false }: { children?: ReactNode; s
   return (
     <header className="topbar">
       <Link to="/" className="topbar__brand" aria-label="서재로">
-        <span className="topbar__brand-mark">
-          <Icon name="pen" size={19} />
-        </span>
-        <span>한 장</span>
+        <span>종이결</span>
+        <span className="topbar__brand-mark">paper grain</span>
       </Link>
       <span className="topbar__spacer" />
       {showSave && (

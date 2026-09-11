@@ -3,7 +3,8 @@ import { Link, useParams } from "react-router-dom";
 import { Button } from "../components/Button";
 import { Icon } from "../components/Icon";
 import { Illustration } from "../illustration/Illustration";
-import { analyzeScene } from "../illustration/analyze";
+import { analyzeScene, type SceneSpec } from "../illustration/analyze";
+import { LABELS } from "../illustration/lexicon";
 import { useNovels } from "../lib/novels";
 import { useTheme } from "../lib/theme";
 import { readingMinutes } from "../lib/text";
@@ -12,6 +13,9 @@ import "./reader.css";
 
 type Mode = "panel" | "scroll";
 
+/** 점 인디케이터가 읽히는 한계. 이보다 길면 머릿글의 숫자로 대신한다. */
+const DOT_LIMIT = 12;
+
 function usePageScene(page: NovelPage | undefined) {
   return useMemo(
     () => analyzeScene(page?.text ?? "", page?.seed ?? 1, page?.sceneOverride),
@@ -19,14 +23,27 @@ function usePageScene(page: NovelPage | undefined) {
   );
 }
 
-/** 그림 한 컷 + 그에 딸린 글 한 덩이. 웹툰의 한 칸에 해당한다. */
-function Panel({ page, index, total }: { page: NovelPage; index: number; total: number }): ReactNode {
+/** 장면에서 뽑은 분위기 꼬리표 — 표지에서 작품의 결을 미리 보여 준다. */
+function sceneTags(scene: SceneSpec): { label: string; tone: string }[] {
+  const tags = [
+    { label: LABELS[scene.mood], tone: "rose" },
+    { label: `${LABELS[scene.time]} ${LABELS[scene.place]}`, tone: "leaf" },
+  ];
+  if (scene.props[0]) tags.push({ label: LABELS[scene.props[0]], tone: "wave" });
+  return tags;
+}
+
+/** 그림 한 컷 + 그에 딸린 글. 웹툰의 한 칸에 해당한다. */
+function Panel({ page }: { page: NovelPage }): ReactNode {
   const scene = usePageScene(page);
   return (
     <article className="panel">
-      <div className="panel__art">
+      <div className="plate">
         <Illustration scene={scene} alt={page.text.slice(0, 60)} />
       </div>
+      <p className="panel__caption ui">
+        <span className="panel__dot" aria-hidden="true" />이 페이지의 장면을 자동으로 그렸습니다
+      </p>
       <div className="panel__text">
         {page.text
           .split(/\n+/)
@@ -36,30 +53,35 @@ function Panel({ page, index, total }: { page: NovelPage; index: number; total: 
           ))}
         {!page.text.trim() && <p className="panel__blank">아직 쓰이지 않은 장입니다.</p>}
       </div>
-      <span className="panel__no" aria-hidden="true">
-        {index + 1} / {total}
-      </span>
     </article>
   );
 }
 
 function Cover({ novel }: { novel: Novel }): ReactNode {
-  const scene = usePageScene(novel.pages.find((p) => p.text.trim()) ?? novel.pages[0]);
+  const first = novel.pages.find((p) => p.text.trim()) ?? novel.pages[0];
+  const scene = usePageScene(first);
   const body = novel.pages.map((p) => p.text).join("\n");
+
   return (
-    <article className="panel panel--cover">
-      <div className="panel__art">
+    <article className="panel cover">
+      <div className="plate">
         <Illustration scene={scene} alt={novel.title || "표지"} />
-        <div className="cover__scrim" />
-        <div className="cover__copy">
-          <h1>{novel.title || "무제"}</h1>
-          {novel.logline && <p>{novel.logline}</p>}
-          <span className="cover__meta">
-            {novel.author ? `${novel.author} · ` : ""}
-            {novel.pages.length}장 · 약 {readingMinutes(body)}분
-          </span>
-        </div>
       </div>
+      <p className="kicker cover__kicker">
+        전 {novel.pages.length}컷 · 평균 {readingMinutes(body)}분
+      </p>
+      <h1 className="cover__title">{novel.title || "무제"}</h1>
+      <p className="cover__meta ui">
+        {novel.author || "이름 없는 작가"} · {novel.pages.length}장
+      </p>
+      <div className="cover__tags">
+        {sceneTags(scene).map((tag) => (
+          <span key={tag.label} className={`pill pill--${tag.tone}`}>
+            {tag.label}
+          </span>
+        ))}
+      </div>
+      {novel.logline && <p className="cover__logline">{novel.logline}</p>}
     </article>
   );
 }
@@ -113,6 +135,7 @@ export function Reader(): ReactNode {
   }
 
   const progress = (step / last) * 100;
+  const label = step === 0 ? "표지" : step === last ? "끝" : `${step} / ${pages.length}`;
 
   const onTouchStart = (e: React.TouchEvent) => {
     touchX.current = e.touches[0].clientX;
@@ -126,31 +149,39 @@ export function Reader(): ReactNode {
 
   return (
     <div className="reader" onTouchStart={onTouchStart} onTouchEnd={onTouchEnd}>
-      <header className="reader__bar">
-        <Link to="/" className="btn btn--quiet btn--sm" aria-label="서재로">
-          <Icon name="close" size={16} />
+      <header className="rhead">
+        <Link to="/" className="rhead__back" aria-label="서재로">
+          ‹
         </Link>
-        <span className="reader__title">{novel.title || "무제"}</span>
-        <span className="topbar__spacer" />
-        <Button
-          size="sm"
-          variant="quiet"
-          onClick={() => setMode((m) => (m === "panel" ? "scroll" : "panel"))}
-          title={mode === "panel" ? "이어보기로" : "한 칸씩 보기로"}
-        >
-          <Icon name={mode === "panel" ? "split" : "grid"} size={15} />
-          <span className="topbar__label">{mode === "panel" ? "이어보기" : "한 칸씩"}</span>
-        </Button>
-        <Button size="sm" variant="quiet" iconOnly onClick={toggle} aria-label="화면 밝기 전환">
-          <Icon name={theme === "dark" ? "sun" : "moon"} size={15} />
-        </Button>
-        <Link to={`/write/${novel.id}`} className="btn btn--quiet btn--sm" aria-label="이 글 고치기">
-          <Icon name="pen" size={15} />
-        </Link>
+        <div className="rhead__mid">
+          <div className="rhead__title">{novel.title || "무제"}</div>
+          <div className="rhead__count ui">{label}</div>
+        </div>
+        <div className="rhead__tools">
+          <button
+            type="button"
+            className="rhead__tool ui"
+            onClick={() => setMode((m) => (m === "panel" ? "scroll" : "panel"))}
+          >
+            {mode === "panel" ? "이어보기" : "한 칸씩"}
+          </button>
+          <button
+            type="button"
+            className="rhead__tool ui"
+            onClick={toggle}
+            aria-label={theme === "dark" ? "밝게" : "어둡게"}
+            title={theme === "dark" ? "밝게" : "어둡게"}
+          >
+            Aa
+          </button>
+          <Link to={`/write/${novel.id}`} className="rhead__tool ui" aria-label="이 글 고치기">
+            <Icon name="pen" size={14} />
+          </Link>
+        </div>
       </header>
 
       {mode === "panel" && (
-        <div className="reader__progress" role="progressbar" aria-valuenow={Math.round(progress)}>
+        <div className="rprogress" role="progressbar" aria-valuenow={Math.round(progress)}>
           <span style={{ width: `${progress}%` }} />
         </div>
       )}
@@ -161,16 +192,13 @@ export function Reader(): ReactNode {
             {/* 그림이 바뀌었다는 걸 몸으로 알 수 있게 key 로 애니메이션을 다시 태운다 */}
             <div className="stage__slot" key={step}>
               {step === 0 && <Cover novel={novel} />}
-              {step > 0 && step <= pages.length && (
-                <Panel page={pages[step - 1]} index={step - 1} total={pages.length} />
-              )}
+              {step > 0 && step <= pages.length && <Panel page={pages[step - 1]} />}
               {step === last && (
                 <div className="ending">
                   <p className="ending__mark">끝</p>
                   <h2>{novel.title || "무제"}</h2>
                   <div className="ending__actions">
                     <Button variant="outline" onClick={() => setStep(0)}>
-                      <Icon name="refresh" size={15} />
                       처음부터
                     </Button>
                     <Link to="/" className="btn btn--primary">
@@ -198,25 +226,38 @@ export function Reader(): ReactNode {
             aria-label="다음"
           />
 
-          <nav className="reader__nav">
-            <Button variant="outline" onClick={() => go(-1)} disabled={step === 0}>
-              <Icon name="left" size={16} />
-              이전
-            </Button>
-            <span className="reader__count">
-              {step === 0 ? "표지" : step === last ? "끝" : `${step} / ${pages.length}`}
-            </span>
-            <Button variant="primary" onClick={() => go(1)} disabled={step === last}>
-              {step === 0 ? "읽기 시작" : "다음"}
-              <Icon name="right" size={16} />
-            </Button>
+          <nav className="rnav">
+            {last <= DOT_LIMIT && (
+              <div className="rnav__dots" aria-hidden="true">
+                {Array.from({ length: last + 1 }, (_, i) => (
+                  <span key={i} data-on={i === step} />
+                ))}
+              </div>
+            )}
+            <div className="rnav__row">
+              <button
+                type="button"
+                className="rnav__prev"
+                onClick={() => go(-1)}
+                disabled={step === 0}
+              >
+                이전
+              </button>
+              <button
+                type="button"
+                className="rnav__next"
+                onClick={() => (step === last ? setStep(0) : go(1))}
+              >
+                {step === 0 ? "읽기 시작" : step === last ? "처음으로" : "다음"}
+              </button>
+            </div>
           </nav>
         </>
       ) : (
         <main className="stream">
           <Cover novel={novel} />
-          {pages.map((page, i) => (
-            <Panel key={page.id} page={page} index={i} total={pages.length} />
+          {pages.map((page) => (
+            <Panel key={page.id} page={page} />
           ))}
           <div className="ending">
             <p className="ending__mark">끝</p>

@@ -73,7 +73,17 @@ function Figure({ x, baseY, scale, fill, variant, facing }: FigureProps): ReactN
   );
 }
 
-function Figures({ spec, p, rand }: { spec: SceneSpec; p: Palette; rand: () => number }): ReactNode {
+function Figures({
+  spec,
+  p,
+  rand,
+  uid,
+}: {
+  spec: SceneSpec;
+  p: Palette;
+  rand: () => number;
+  uid: string;
+}): ReactNode {
   if (spec.characters <= 0) return null;
   const baseY = GROUND_Y[spec.place];
   // 인물을 화면 중앙에서 살짝 비켜 세워 여백이 답답해지지 않게 한다.
@@ -86,14 +96,14 @@ function Figures({ spec, p, rand }: { spec: SceneSpec; p: Palette; rand: () => n
         const scale = range(rand, 0.92, 1.16) * (spec.place === "space" ? 0.86 : 1);
         const facing: 1 | -1 = rand() > 0.35 ? 1 : -1;
         return (
-          <g key={i}>
+          <g key={i} filter={`url(#${uid}-drop)`}>
             <ellipse
               cx={x}
               cy={baseY + 3}
               rx={26 * scale}
               ry={5 * scale}
-              fill={p.figure}
-              opacity={0.28}
+              fill={p.outline}
+              opacity={0.3}
             />
             <Figure
               x={x}
@@ -309,8 +319,14 @@ function Sky({ p, rand, uid, spec }: { p: Palette; rand: () => number; uid: stri
         ))}
       {!hidden && (
         <g>
-          <circle cx={luminaryX} cy={luminaryY} r={78} fill={p.luminaryGlow} opacity={0.22} filter={`url(#${uid}-blur)`} />
-          <circle cx={luminaryX} cy={luminaryY} r={p.stars ? 26 : 34} fill={p.luminary} />
+          <circle cx={luminaryX} cy={luminaryY} r={78} fill={p.luminaryGlow} opacity={0.3} filter={`url(#${uid}-blur)`} />
+          <circle
+            cx={luminaryX}
+            cy={luminaryY}
+            r={p.stars ? 26 : 34}
+            fill={p.luminary}
+            filter={`url(#${uid}-drop)`}
+          />
           {p.stars && (
             // 초승달 — 원 하나를 살짝 겹쳐 깎는다
             <circle cx={luminaryX + 11} cy={luminaryY - 7} r={24} fill={p.skyTop} opacity={0.92} />
@@ -321,9 +337,19 @@ function Sky({ p, rand, uid, spec }: { p: Palette; rand: () => number; uid: stri
   );
 }
 
-function Clouds({ p, rand, dense }: { p: Palette; rand: () => number; dense: boolean }): ReactNode {
+function Clouds({
+  p,
+  rand,
+  dense,
+  uid,
+}: {
+  p: Palette;
+  rand: () => number;
+  dense: boolean;
+  uid: string;
+}): ReactNode {
   return (
-    <g fill={p.haze} opacity={dense ? 0.5 : 0.3}>
+    <g fill={p.haze} opacity={dense ? 0.92 : 0.8} filter={`url(#${uid}-drop)`}>
       {times(dense ? 6 : 3, (i) => {
         const x = range(rand, -60, W);
         const y = range(rand, 30, 190);
@@ -395,11 +421,24 @@ function Weather({ spec, p, rand, uid }: { spec: SceneSpec; p: Palette; rand: ()
 export function Illustration({ scene, alt, className }: Props): ReactNode {
   const rawId = useId();
   const uid = useMemo(() => `ill${rawId.replace(/[^a-zA-Z0-9]/g, "")}`, [rawId]);
-  // 우주는 시간대가 무의미하다 — 언제나 밤하늘로 그린다.
-  const p = useMemo(
-    () => getPalette(scene.place === "space" ? "night" : scene.time, scene.mood),
-    [scene.place, scene.time, scene.mood],
-  );
+  // 우주는 시간대가 무의미하다. 다른 장면보다 어둡게 깔아야 별이 보인다.
+  const p = useMemo(() => {
+    const base = getPalette(scene.place === "space" ? "night" : scene.time, scene.mood);
+    if (scene.place !== "space") return base;
+    return {
+      ...base,
+      skyTop: "#3a3452",
+      skyMid: "#4d4568",
+      skyBottom: "#6b5f86",
+      haze: "#8d82a8",
+      far: "#8b80a6",
+      mid: "#6d6389",
+      near: "#574e73",
+      ground: "#5f5680",
+      outline: "#463e5e",
+      particle: "#f6f3ff",
+    };
+  }, [scene.place, scene.time, scene.mood]);
 
   const indoor = INDOOR.has(scene.place);
   const horizon = indoor ? WINDOW.y + WINDOW.h : 330;
@@ -411,21 +450,20 @@ export function Illustration({ scene, alt, className }: Props): ReactNode {
     return (
       <>
         <Sky p={p} rand={rand} uid={uid} spec={scene} />
-        {cloudy && !indoor && <Clouds p={p} rand={rand} dense={scene.weather !== "cloud"} />}
+        {cloudy && !indoor && <Clouds p={p} rand={rand} dense={scene.weather !== "cloud"} uid={uid} />}
         {indoor ? (
           <Interior place={scene.place} p={p} rand={rand} horizon={horizon} uid={uid} />
         ) : (
           <Backdrop place={scene.place} p={p} rand={rand} horizon={horizon} uid={uid} />
         )}
         {scene.crowd && <Crowd p={p} rand={rand} baseY={GROUND_Y[scene.place]} />}
-        <Figures spec={scene} p={p} rand={rand} />
+        <Figures spec={scene} p={p} rand={rand} uid={uid} />
         {scene.props.map((prop) => (
           <PropLayer key={prop} prop={prop} spec={scene} p={p} rand={rand} uid={uid} />
         ))}
         {!indoor && <Weather spec={scene} p={p} rand={rand} uid={uid} />}
         <rect x={0} y={0} width={W} height={H} fill={p.tint} opacity={p.tintAlpha} />
-        <rect x={0} y={0} width={W} height={H} fill={`url(#${uid}-vig)`} />
-        <rect x={0} y={0} width={W} height={H} filter={`url(#${uid}-grain)`} opacity={0.14} />
+        <rect x={0} y={0} width={W} height={H} filter={`url(#${uid}-grain)`} opacity={0.07} />
       </>
     );
     // rand 는 시드에서 파생되므로 scene 이 바뀔 때만 다시 만들어진다.
@@ -446,13 +484,12 @@ export function Illustration({ scene, alt, className }: Props): ReactNode {
           <stop offset="100%" stopColor={p.skyBottom} />
         </linearGradient>
         <linearGradient id={`${uid}-sea`} x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stopColor={p.haze} stopOpacity="0.35" />
-          <stop offset="100%" stopColor={p.ground} stopOpacity="0.9" />
+          <stop offset="0%" stopColor={p.haze} stopOpacity="0.3" />
+          <stop offset="100%" stopColor={p.near} stopOpacity="0.35" />
         </linearGradient>
-        <radialGradient id={`${uid}-vig`} cx="50%" cy="46%" r="76%">
-          <stop offset="60%" stopColor="#000000" stopOpacity="0" />
-          <stop offset="100%" stopColor="#000000" stopOpacity="0.34" />
-        </radialGradient>
+        <filter id={`${uid}-drop`} x="-30%" y="-30%" width="170%" height="170%">
+          <feDropShadow dx="0" dy="2" stdDeviation="2.4" floodColor="#8d7c6c" floodOpacity="0.32" />
+        </filter>
         <filter id={`${uid}-blur`} x="-50%" y="-50%" width="200%" height="200%">
           <feGaussianBlur stdDeviation="14" />
         </filter>

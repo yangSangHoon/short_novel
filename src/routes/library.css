@@ -1,35 +1,30 @@
 .library {
-  max-width: 1120px;
+  max-width: 1060px;
   margin: 0 auto;
   padding: var(--s7) var(--s5) var(--s9);
 }
 
 /* ---- 히어로 ---- */
 .hero {
-  max-width: 40rem;
-  margin-bottom: var(--s9);
-}
-.hero__eyebrow {
-  font-size: 13px;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: var(--accent);
-  margin-bottom: var(--s3);
+  max-width: 38rem;
+  margin-bottom: var(--s8);
 }
 .hero__title {
-  font-size: clamp(32px, 5.4vw, 52px);
-  line-height: 1.24;
-  letter-spacing: -0.02em;
-  margin-bottom: var(--s4);
+  margin-top: var(--s3);
+  font-size: clamp(30px, 5vw, 46px);
+  line-height: 1.32;
+  letter-spacing: -0.015em;
 }
 .hero__lead {
+  margin-top: var(--s4);
+  max-width: 32rem;
+  font-size: 15px;
+  line-height: 1.95;
   color: var(--ink-muted);
-  font-size: 16px;
-  line-height: 1.75;
-  max-width: 34rem;
+  word-break: keep-all;
 }
 .hero__actions {
-  margin-top: var(--s6);
+  margin-top: var(--s5);
 }
 
 /* ---- 서가 ---- */
@@ -37,115 +32,87 @@
   display: flex;
   align-items: baseline;
   gap: var(--s3);
-  padding-bottom: var(--s4);
+  padding-bottom: var(--s3);
   margin-bottom: var(--s5);
   border-bottom: 1px solid var(--line);
 }
 .shelf__title {
-  font-size: 20px;
+  font-size: 19px;
 }
 .shelf__count {
-  font-size: 13px;
+  font-size: 12px;
   color: var(--ink-faint);
 }
 
 .grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(266px, 1fr));
-  gap: var(--s5);
+  grid-template-columns: repeat(auto-fill, minmax(282px, 1fr));
+  gap: var(--s6) var(--s5);
 }
 
-/* ---- 카드 ---- */
+/* ---- 카드 ----
+   카드에 테두리를 두르지 않는다. 종이 위에 인화지와 글이 얹힌 모양. */
 .card {
   display: flex;
   flex-direction: column;
-  background: var(--paper-raised);
-  border: 1px solid var(--line);
-  border-radius: var(--r-lg);
-  overflow: hidden;
-  transition: transform var(--dur) var(--ease), box-shadow var(--dur) var(--ease),
-    border-color var(--dur) var(--ease);
 }
-.card:hover {
-  transform: translateY(-3px);
-  box-shadow: var(--shadow-lg);
-  border-color: var(--line-strong);
-}
-
 .card__cover {
-  position: relative;
   display: block;
+}
+.card__plate {
+  display: block;
+  transition: transform var(--dur) var(--ease), box-shadow var(--dur) var(--ease);
+}
+.card__plate svg {
   aspect-ratio: 8 / 5;
-  background: var(--paper-sunken);
-  overflow: hidden;
-}
-.cover__art {
   width: 100%;
-  height: 100%;
-  object-fit: cover;
-  transition: transform var(--dur-slow) var(--ease);
 }
-.card:hover .cover__art {
-  transform: scale(1.035);
-}
-.card__play {
-  position: absolute;
-  inset: auto var(--s3) var(--s3) auto;
-  display: inline-flex;
-  align-items: center;
-  gap: var(--s1);
-  padding: 5px var(--s3);
-  border-radius: var(--r-full);
-  background: var(--paper-overlay);
-  backdrop-filter: blur(8px);
-  color: var(--ink);
-  font-size: 12px;
-  font-weight: 500;
-  opacity: 0;
-  transform: translateY(6px);
-  transition: opacity var(--dur) var(--ease), transform var(--dur) var(--ease);
-}
-.card:hover .card__play,
-.card__cover:focus-visible .card__play {
-  opacity: 1;
-  transform: none;
+.card:hover .card__plate {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
 }
 
 .card__body {
   flex: 1;
-  padding: var(--s4) var(--s4) var(--s2);
+  padding-top: var(--s4);
 }
 .card__title {
-  font-size: 17px;
-  margin-bottom: var(--s2);
+  margin-top: 6px;
+  font-size: 21px;
+  letter-spacing: -0.01em;
   overflow: hidden;
   display: -webkit-box;
   -webkit-line-clamp: 1;
   line-clamp: 1;
   -webkit-box-orient: vertical;
 }
+.card__meta {
+  margin-top: 4px;
+  font-size: 12px;
+  color: var(--ink-faint);
+}
+.card__tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  margin-top: var(--s3);
+}
 .card__logline {
+  margin-top: var(--s3);
+  font-size: 14px;
+  line-height: 1.85;
   color: var(--ink-muted);
-  font-size: 13.5px;
-  line-height: 1.6;
-  min-height: 2.9em;
+  word-break: keep-all;
   overflow: hidden;
   display: -webkit-box;
   -webkit-line-clamp: 2;
   line-clamp: 2;
   -webkit-box-orient: vertical;
 }
-.card__meta {
-  display: flex;
-  gap: var(--s2);
-  margin-top: var(--s3);
-  font-size: 12px;
-  color: var(--ink-faint);
-}
 .card__actions {
   display: flex;
   gap: var(--s2);
-  padding: 0 var(--s4) var(--s4);
+  padding-top: var(--s4);
 }
 
 @media (max-width: 640px) {

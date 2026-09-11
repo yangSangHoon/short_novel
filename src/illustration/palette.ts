@@ -1,24 +1,35 @@
 import type { Mood, TimeOfDay } from "./lexicon";
 
+/**
+ * 삽화 색. 디자인의 레퍼런스 그림(파스텔 해안 마을, 종이 위에 얹은 듯한 질감)을
+ * 따라 전 시간대를 밝게 가져간다. 밤도 검게 떨어뜨리지 않고 연보라로 둔다.
+ */
 export interface Palette {
   /** 하늘 그라디언트 (위 → 아래). */
   skyTop: string;
   skyMid: string;
   skyBottom: string;
-  /** 지평선 부근에 깔리는 옅은 빛. */
+  /** 지평선 부근의 옅은 빛과 구름. */
   haze: string;
   /** 해·달 본체와 그 후광. */
   luminary: string;
   luminaryGlow: string;
-  /** 원경 → 근경으로 갈수록 어두워지는 3단 실루엣. */
+  /** 원경 → 근경으로 가며 짙어지는 3단. */
   far: string;
   mid: string;
   near: string;
   ground: string;
-  /** 인물 실루엣. 근경보다 한 단계 더 어둡다. */
+  /** 물 — 중경 색을 그대로 쓰면 시간대에 따라 물이 물처럼 안 보인다. */
+  water: string;
+  /** 인물. 새까만 실루엣 대신 부드러운 자주빛. */
   figure: string;
   /** 창문·등불처럼 스스로 빛나는 것. */
   glow: string;
+  /** 건물·소품에 돌려쓰는 파스텔 삼색과 지붕색. */
+  wall: [string, string, string];
+  roof: [string, string];
+  /** 형태를 잡아 주는 가는 윤곽선. */
+  outline: string;
   /** 분위기 보정용 전면 틴트. */
   tint: string;
   tintAlpha: number;
@@ -29,93 +40,108 @@ export interface Palette {
   lowLight: boolean;
 }
 
+/** 시간대와 무관하게 유지되는 마을 색 — 그림의 성격을 만드는 축. */
+const VILLAGE = {
+  wall: ["#fbf3e4", "#f3c9c5", "#dfe9dc"] as [string, string, string],
+  roof: ["#d9906b", "#cf8462"] as [string, string],
+  outline: "#b5a189",
+};
+
 const BASE: Record<TimeOfDay, Palette> = {
   dawn: {
-    skyTop: "#3d4a72",
-    skyMid: "#8d7d9c",
-    skyBottom: "#f0c3a4",
-    haze: "#f7dcc4",
-    luminary: "#fff0d2",
-    luminaryGlow: "#ffd9a6",
-    far: "#7d7f9e",
-    mid: "#5a5b7c",
-    near: "#3a3a56",
-    ground: "#2c2c43",
-    figure: "#1f1f30",
-    glow: "#ffd79a",
-    tint: "#f0b98f",
-    tintAlpha: 0.06,
-    particle: "#e8e2f0",
+    skyTop: "#e3dbee",
+    skyMid: "#f6e3dc",
+    skyBottom: "#fdf2e8",
+    haze: "#fef7ee",
+    luminary: "#fbeacb",
+    luminaryGlow: "#f8d9b4",
+    far: "#d8c8d3",
+    mid: "#bfa9bb",
+    near: "#c9b79f",
+    ground: "#e3d5c6",
+    water: "#a3b3cc",
+    figure: "#97848f",
+    glow: "#f6e2c5",
+    ...VILLAGE,
+    tint: "#f7d9c2",
+    tintAlpha: 0.04,
+    particle: "#e9e2f0",
     stars: false,
     lowLight: true,
   },
   day: {
-    skyTop: "#6fb0dd",
-    skyMid: "#a8d3ea",
-    skyBottom: "#e2eef2",
-    haze: "#f3f7f4",
-    luminary: "#fff6dd",
-    luminaryGlow: "#ffe9b0",
-    far: "#9dbfc4",
-    mid: "#7ba0a4",
-    near: "#537a7d",
-    ground: "#3f5f60",
-    figure: "#2b4243",
-    glow: "#fff3cf",
-    tint: "#ffe9b8",
-    tintAlpha: 0.05,
-    particle: "#ffffff",
+    skyTop: "#d6e7f1",
+    skyMid: "#eaf2f6",
+    skyBottom: "#f7f3ee",
+    haze: "#fdfcfb",
+    luminary: "#f6e2c5",
+    luminaryGlow: "#f9edd6",
+    far: "#cbdae2",
+    mid: "#a7c2d3",
+    near: "#c9b79f",
+    ground: "#dfd2bf",
+    water: "#a7c2d3",
+    figure: "#9b8590",
+    glow: "#f6e2c5",
+    ...VILLAGE,
+    tint: "#f7efdc",
+    tintAlpha: 0.03,
+    particle: "#dbe8f0",
     stars: false,
     lowLight: false,
   },
   dusk: {
-    skyTop: "#3b2a52",
-    skyMid: "#8e4f61",
-    skyBottom: "#e8895a",
-    haze: "#f7b982",
-    luminary: "#ffd9a0",
-    luminaryGlow: "#ff9f5e",
-    far: "#8a5a6a",
-    mid: "#5c3b4f",
-    near: "#3a2436",
-    ground: "#291823",
-    figure: "#1a0f18",
-    glow: "#ffc078",
-    tint: "#ff9a5c",
-    tintAlpha: 0.08,
-    particle: "#ffd8bd",
+    skyTop: "#cfc0d8",
+    skyMid: "#f0c8b6",
+    skyBottom: "#fadcc4",
+    haze: "#fdeadc",
+    luminary: "#f9d9a8",
+    luminaryGlow: "#f5b892",
+    far: "#d2b2b5",
+    mid: "#b79299",
+    near: "#a8838c",
+    ground: "#d9c3b7",
+    water: "#c0959c",
+    figure: "#8a7581",
+    glow: "#f6d29a",
+    ...VILLAGE,
+    tint: "#f6b78d",
+    tintAlpha: 0.05,
+    particle: "#f3ded0",
     stars: false,
     lowLight: true,
   },
   night: {
-    skyTop: "#0b1130",
-    skyMid: "#182247",
-    skyBottom: "#32406b",
-    haze: "#4a5a86",
-    luminary: "#f4f1e2",
-    luminaryGlow: "#cfd8f0",
-    far: "#2b3760",
-    mid: "#1d2647",
-    near: "#131A33",
-    ground: "#0c1124",
-    figure: "#05070f",
-    glow: "#ffd28a",
-    tint: "#3d5a9e",
-    tintAlpha: 0.1,
-    particle: "#dce6ff",
+    skyTop: "#cbc6dc",
+    skyMid: "#dad6e7",
+    skyBottom: "#e9e6ef",
+    haze: "#f1eff5",
+    luminary: "#f6e2c5",
+    luminaryGlow: "#f8ecd4",
+    far: "#aca5bd",
+    mid: "#8ea6bd",
+    near: "#8d8397",
+    ground: "#b3a9ba",
+    water: "#8ea6bd",
+    figure: "#88808f",
+    glow: "#f6e2c5",
+    ...VILLAGE,
+    tint: "#b9b0d2",
+    tintAlpha: 0.06,
+    particle: "#bdb5cd",
     stars: true,
     lowLight: true,
   },
 };
 
-/** 감정은 색을 갈아엎기보다 얇게 덮어 성격만 바꾼다. */
+/** 감정은 색을 갈아엎지 않고 아주 얇게 덮어 성격만 바꾼다. */
 const MOOD_TINT: Record<Mood, { tint: string; alpha: number }> = {
-  calm: { tint: "#8fb3c9", alpha: 0.05 },
-  warm: { tint: "#ffb774", alpha: 0.1 },
-  sad: { tint: "#6b7fa8", alpha: 0.12 },
-  tense: { tint: "#6e2b2b", alpha: 0.14 },
-  mystic: { tint: "#7b62c4", alpha: 0.13 },
-  bright: { tint: "#ffe59a", alpha: 0.09 },
+  calm: { tint: "#cfe0e8", alpha: 0.05 },
+  warm: { tint: "#f8d9c0", alpha: 0.09 },
+  sad: { tint: "#cdd4e6", alpha: 0.09 },
+  tense: { tint: "#e7c2bc", alpha: 0.1 },
+  mystic: { tint: "#ddd2ec", alpha: 0.11 },
+  bright: { tint: "#fdf0cf", alpha: 0.08 },
 };
 
 export function getPalette(time: TimeOfDay, mood: Mood): Palette {
@@ -124,7 +150,7 @@ export function getPalette(time: TimeOfDay, mood: Mood): Palette {
   return {
     ...base,
     tint: mod.tint,
-    // 원래 시간대 틴트와 감정 틴트를 합쳐, 밤에 과하게 덮이지 않도록 상한을 둔다.
-    tintAlpha: Math.min(0.2, base.tintAlpha + mod.alpha),
+    // 파스텔 위에 틴트를 두껍게 올리면 금방 탁해진다. 상한을 낮게 둔다.
+    tintAlpha: Math.min(0.14, base.tintAlpha + mod.alpha),
   };
 }
